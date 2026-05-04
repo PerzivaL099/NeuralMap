@@ -17,8 +17,8 @@ def _row_to_node(row: dict) -> NodeResponse:
         x=n.get("x", 0.0),
         y=n.get("y", 0.0),
         asset_key=n.get("asset_key"),
-        created_at=n["created_at"],
-        updated_at=n["updated_at"],
+        created_at=n["created_at"].to_native(),
+        updated_at=n["updated_at"].to_native(),
     )
 
 

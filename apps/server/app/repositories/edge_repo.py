@@ -15,7 +15,7 @@ def _row_to_edge(row: dict) -> EdgeResponse:
         label=r.get("label"),
         weight=r.get("weight", 1.0),
         kind=r.get("kind", "manual"),
-        created_at=r["created_at"],
+        created_at=r["created_at"].to_native(),
     )
 
 

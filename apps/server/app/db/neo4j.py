@@ -1,7 +1,8 @@
 import os
 from neo4j import AsyncGraphDatabase, AsyncDriver
 from typing import Optional
-
+from dotenv import load_dotenv
+load_dotenv()
 
 class Neo4jDriver:
     _driver: Optional[AsyncDriver] = None
