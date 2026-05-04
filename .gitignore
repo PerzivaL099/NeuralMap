@@ -1,0 +1,35 @@
+@"
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# Environment secrets - NEVER commit
+.env
+
+# Neo4j local data
+infra/neo4j/data/
+infra/neo4j/logs/
+
+# MinIO local data
+infra/minio/data/
+
+# Node / frontend (for later)
+node_modules/
+dist/
+.next/
+
+# Tauri (for later)
+apps/desktop/src-tauri/target/
+
+# OS
+.DS_Store
+Thumbs.db
+"@ | Out-File -Encoding utf8 .gitignore

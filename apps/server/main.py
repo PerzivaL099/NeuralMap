@@ -1,34 +1,41 @@
-from fastapi import FastAPI, HTTPException
-from neo4j import GraphDatabase
-import os
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 
-#Initializing FastAPI app
+from app.db.neo4j import neo4j_driver
+from app.api.routes import nodes, edges, graph
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Startup: verify Neo4j connection & apply schema constraints
+    await neo4j_driver.connect()
+    await neo4j_driver.apply_schema()
+    yield
+    # Shutdown: close Neo4j driver
+    await neo4j_driver.close()
+
+
 app = FastAPI(
     title="NeuralMap API",
-    description="API for managing and querying the NeuralMap knowledge graph.",
-    version="1.0.0"
+    description="Graph-based second brain — nodes, edges, and AI-powered connections.",
+    version="0.1.0",
+    lifespan=lifespan,
 )
 
-#Database configuration
-#TODO : Move these to environment variables or a config file
-NEO4J_URI = os.getenv("NEO4J_URI", "bolt://localhost:7687")
-NEO4J_USER = os.getenv("NEO4J_USER", "neo4j")
-NEO4J_PASSWORD = os.getenv("NEO4J_PASSWORD", "password")
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:1420"],  # Tauri dev port
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-#Initialize Neo4j driver
-driver = GraphDatabase.driver(NEO4J_URI, auth=(NEO4J_USER, NEO4J_PASSWORD))
+app.include_router(nodes.router, prefix="/api/nodes",  tags=["Nodes"])
+app.include_router(edges.router, prefix="/api/edges",  tags=["Edges"])
+app.include_router(graph.router, prefix="/api/graph",  tags=["Graph"])
 
-@app.on_event("shutdown")
-def close_driver():
-    driver.close()
 
-@app.get("/health/db")
-def health_check_db():
-    try:
-        with driver.session() as session:
-            result = session.run("RETURN 1 AS num")
-            record = result.single()
-            if record and record['num'] == 1:
-                return {"status": "ok", "message":  "Connnected to Neo4j successfully."}
-    except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Database connection failed: {str(e)}")
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
