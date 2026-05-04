@@ -1,0 +1,51 @@
+.canvas {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg-void);
+  cursor: crosshair;
+}
+.canvas__grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.canvas__world {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+.canvas__hud {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--text-dim);
+  pointer-events: none;
+  text-transform: uppercase;
+}
+.canvas__hud-zoom { color: var(--neural-cyan); opacity: 0.7; }
+.canvas__hint {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--text-dim);
+  pointer-events: none;
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 0.4; }
+  50%       { opacity: 0.9; }
+}
